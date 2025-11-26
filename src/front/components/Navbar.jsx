@@ -20,10 +20,11 @@ export const Navbar = () => {
 							<Link className=" text-light nav-link" to="/characters">Characters</Link>
 						</li>
 						<li className="nav-item">
-							<Link className=" text-light nav-link" to="/characters">Planets</Link>
+							<Link className=" text-light nav-link" to="/planets">Planets</Link>
 						</li>
 						<li className="nav-item">
-							<Link className=" text-light nav-link" to="/characters">Starships</Link>
+							<Link className=" text-light nav-link" to="/starships">Starships</Link>
+
 						</li>
 						<li className="nav-item">
 							<Link className=" text-light nav-link" to="/contacts">Contacts</Link>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 
 export const AddContact = () => {
@@ -14,10 +15,10 @@ export const AddContact = () => {
         event.preventDefault();
 
         const dataToSend = {
-            name: "",
-            email: "",
-            phone: "",
-            address: "",
+            name,
+            email,
+            phone,
+            address
         };
 
         const uri = `${baseURL}/agendas/${user}/contacts`;
@@ -91,8 +92,13 @@ export const AddContact = () => {
                     />
                 </div>
 
-                <button type="submit" className="btn btn-warning me-2 px-4" onClick={handleSubmitContact}>Guardar</button>
-                <button type="button" className="btn btn-secondary px-4">Cancelar</button>
+
+                <Link to="/contacts">
+                    <button type="submit" className="btn btn-warning me-2 px-4" onClick={handleSubmitContact}>Guardar</button>
+                </Link>
+                <Link to="/contacts">
+                    <button type="button" className="btn btn-secondary px-4">Cancelar</button>
+                </Link>
             </form>
         </div>
     );
