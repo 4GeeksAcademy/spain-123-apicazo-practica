@@ -15,6 +15,7 @@ import { AddContact } from "./pages/AddContact.jsx";
 import { Planets } from "./pages/Planets.jsx";
 import { Starships } from "./pages/Starships.jsx";
 import { CharactersDetails } from "./pages/CharactersDetails.jsx";
+import { EditContact } from "./pages/EditContact.jsx";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -37,6 +38,8 @@ export const router = createBrowserRouter(
       <Route path="/planets" element={<Planets />} />
       <Route path="/charactersDetails" element={<CharactersDetails />} />
       <Route path="/starships" element={<Starships />} />
+      <Route path="/contacts/:id" element={<EditContact />} />
+
 
 
     </Route>

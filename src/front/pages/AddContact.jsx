@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 
 
 export const AddContact = () => {
@@ -7,9 +7,32 @@ export const AddContact = () => {
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [address, setAddress] = useState("");
+    const navigate = useNavigate();
+
 
     const baseURL = "https://playground.4geeks.com/contact";
     const user = "AlexPicazo";
+
+    const crearAgenda = async () => {
+
+        const uri = `${baseURL}/agendas/${user}`;
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ agenda_slug: user }),
+        };
+
+        const response = await fetch(uri, options);
+        if (!response.ok) {
+            console.log("Error creando la agenda:", response.status, response.statusText);
+            return false;
+        }
+
+        console.log("Agenda creada");
+        return true;
+    };
 
     const handleSubmitContact = async (event) => {
         event.preventDefault();
@@ -35,7 +58,18 @@ export const AddContact = () => {
 
         if (!response.ok) {
             console.log("error", response.status, response.statusText);
-            return;
+            const creada = await crearAgenda;
+            if (creada) {
+                return handleSubmitContact();
+            } else {
+
+                console.log("La agenda no existe");
+                crearAgenda();
+                console.log("La agenda ha sido creada");
+
+                handleSubmitContact();
+            }
+
         }
 
         const data = await response.json();
@@ -45,6 +79,8 @@ export const AddContact = () => {
         setEmail("");
         setPhone("");
         setAddress("");
+
+        navigate("/contacts")
     };
 
     return (
@@ -93,11 +129,11 @@ export const AddContact = () => {
                 </div>
 
 
+
+                <button type="submit" className="btn btn-warning me-2 px-4" onClick={(handleSubmitContact)}>Guardar</button>
+
                 <Link to="/contacts">
-                    <button type="submit" className="btn btn-warning me-2 px-4" onClick={handleSubmitContact}>Guardar</button>
-                </Link>
-                <Link to="/contacts">
-                    <button type="button" className="btn btn-secondary px-4">Cancelar</button>
+                    <button type="button" className="btn btn-secondary px-4" onClick={() => { navigate(`/contacts`) }}>Cancelar</button>
                 </Link>
             </form>
         </div>

@@ -6,7 +6,7 @@ export const CharactersDetails = () => {
     const [personajesDetails, setPersonajesDetails] = useState({});
 
     const getCharactersDetails = async () => {
-        const response = await fetch(store.currenCharacter.url)
+        const response = await fetch(store.currentCharacter.url)
         if (!response.ok) {
             console.log('Error', response.status, response.type);
             return

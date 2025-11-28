@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import starTropper from "../assets/img/startrooper.png";
 
 const baseURL = "https://playground.4geeks.com/contact";
@@ -8,7 +8,28 @@ const user = "AlexPicazo";
 export const Contacts = () => {
 
     const [contact, setContact] = useState([]);
+    const navigate = useNavigate();
 
+    const crearAgenda = async () => {
+
+        const uri = `${baseURL}/agendas/${user}`;
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ agenda_slug: user }),
+        };
+
+        const response = await fetch(uri, options);
+        if (!response.ok) {
+            console.log("Error creando la agenda:", response.status, response.statusText);
+            return false;
+        }
+
+        console.log("Agenda creada");
+        return true;
+    };
 
     const getContacts = async () => {
         const uri = `${baseURL}/agendas/${user}/contacts`;
@@ -18,7 +39,12 @@ export const Contacts = () => {
             console.log("error", response.status, response.statusText);
             if (response.status == "404") {
                 console.log("Por favor crea la agenda", user);
+                const created = await crearAgenda();
+                if (created) {
+                    return getContacts();
+                }
             }
+
             return;
         }
         const data = await response.json();
@@ -92,9 +118,15 @@ export const Contacts = () => {
                                 </div>
 
                                 <div className="ms-auto d-flex align-items-center">
-                                    <button className="btn btn-secondary me-2 p-2">
+
+                                    <button
+                                        className="btn btn-secondary me-2 p-2"
+                                        onClick={() => navigate(`/contacts/${item.id}`)}
+                                    >
                                         <i className="fa fa-pencil"></i>
                                     </button>
+
+
 
                                     <button className="btn btn-danger p-2" onClick={() => handleDelete(item.id)}>
                                         <i className="fa fa-trash"></i>

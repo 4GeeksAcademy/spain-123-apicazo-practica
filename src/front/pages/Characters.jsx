@@ -13,7 +13,7 @@ export const Characters = () => {
     const handleDetails = (personaje) => {
         //grabo el personaje en el store
         dispatch({
-            type: 'characters_Details',
+            type: 'characters_details',
             payload: personaje
         })
         //navego al componente
@@ -49,12 +49,10 @@ export const Characters = () => {
 
             <h1 className="text-center text-light mb-4">Characters</h1>
 
-            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4">
-
-
+            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4" >
 
                 {characters.map((item) =>
-                    <div className="col">
+                    <div className="col" key={item.uid} >
                         <div className="card h-100">
                             <img
                                 src={`https://github.com/breatheco-de/swapi-images/blob/master/public/images/people/${item.uid}.jpg?raw=true`}
@@ -62,7 +60,7 @@ export const Characters = () => {
                                 alt="Character"
                             />
                             <div className="card-body">
-                                <h5 className="card-title">{item.name}</h5>
+                                <h5 key={item.id} className="card-title">{item.name}</h5>
                                 <div className="d-flex justify-content-between">
 
                                     <button className="btn btn-primary btn-sm" onClick={handleDetails}>Details</button>

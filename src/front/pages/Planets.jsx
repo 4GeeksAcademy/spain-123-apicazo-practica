@@ -13,7 +13,7 @@ export const Planets = () => {
 
 
     const getPlanets = async () => {
-        const planetas = JSON.parse(localStorage.getItem('planets'))
+        const planetas = JSON.parse(localStorage.getiter('planets'))
         if (!planetas) {
             const uri = `${swapiHost}/planets`
             const response = await fetch(uri)
@@ -24,7 +24,7 @@ export const Planets = () => {
 
             }
             const data = await response.json();
-            localStorage.setItem('planets', JSON.stringify(data.results))
+            localStorage.setiter('planets', JSON.stringify(data.results))
             planetas = data.results
 
         }
@@ -45,16 +45,16 @@ export const Planets = () => {
 
 
 
-                {planets.map((item) =>
+                {planets.map((iter) =>
                     <div className="col">
                         <div className="card h-100">
                             <img
-                                src={`https://github.com/breatheco-de/swapi-images/blob/master/public/images/planets/${item.uid}.jpg?raw=true`}
+                                src={`https://github.com/breatheco-de/swapi-images/blob/master/public/images/planets/${iter.uid}.jpg?raw=true`}
                                 className="card-img-top"
                                 alt="Character"
                             />
                             <div className="card-body">
-                                <h5 className="card-title">{item.name}</h5>
+                                <h5 className="card-title">{iter.name}</h5>
                                 <div className="d-flex justify-content-between">
 
                                     <button className="btn btn-primary btn-sm" onClick={handleDetails}>Details</button>

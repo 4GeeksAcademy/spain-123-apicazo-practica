@@ -19,7 +19,7 @@ export const initialStore = () => {
 
 export default function storeReducer(store, action = {}) {
   switch (action.type) {
-    case "character_Details":
+    case "characters_details":
       return { ...store, currentCharacter: action.payload };
 
     case "set_hello":
