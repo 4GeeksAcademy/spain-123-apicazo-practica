@@ -49,7 +49,7 @@ export const Planets = () => {
                     <div className="col">
                         <div className="card h-100">
                             <img
-                                src={`https://github.com/breatheco-de/swapi-images/blob/master/public/images/planets/${iter.uid}.jpg?raw=true`}
+                                src={`https://github.com/breatheco-de/swapi-images/blob/master/public/images/planets/${item.uid}.jpg?raw=true`}
                                 className="card-img-top"
                                 alt="Character"
                             />
