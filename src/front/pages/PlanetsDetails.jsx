@@ -2,24 +2,22 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 
-export const CharactersDetails = () => {
+export const PlanetsDetails = () => {
     const { store } = useGlobalReducer();
     const navigate = useNavigate();
 
-    const [personajeDetails, setPersonajeDetails] = useState(null);
+    const [planetDetails, setPlanetDetails] = useState(null);
     const [loading, setLoading] = useState(true);
 
-
-    const current = store.currentCharacter;
-
+    const current = store.currentPlanet;
 
     const imgUrl = useMemo(() => {
         const uid = current?.uid || current?.id;
         if (!uid) return null;
-        return `https://github.com/breatheco-de/swapi-images/blob/master/public/images/people/${uid}.jpg?raw=true`;
+        return `https://github.com/breatheco-de/swapi-images/blob/master/public/images/planets/${uid}.jpg?raw=true`;
     }, [current]);
 
-    const getCharactersDetails = async () => {
+    const getPlanetDetails = async () => {
         try {
             if (!current?.url) {
                 setLoading(false);
@@ -34,8 +32,7 @@ export const CharactersDetails = () => {
             }
 
             const data = await response.json();
-
-            setPersonajeDetails(data.result.properties);
+            setPlanetDetails(data.result.properties);
             setLoading(false);
         } catch (err) {
             console.log("Fetch error:", err);
@@ -44,18 +41,18 @@ export const CharactersDetails = () => {
     };
 
     useEffect(() => {
-        getCharactersDetails();
-
+        getPlanetDetails();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-
+    // Entrar por URL directa / refresh sin seleccionar planeta antes
     if (!current?.url && !loading) {
         return (
             <div className="container mt-5 text-light">
-                <h2>No hay personaje seleccionado</h2>
-                <p>Vuelve a la lista y pulsa “Details” en un personaje.</p>
-                <Link to="/characters" className="btn btn-primary">
-                    Volver a Characters
+                <h2>No hay planeta seleccionado</h2>
+                <p>Vuelve a la lista y pulsa “Details” en un planeta.</p>
+                <Link to="/planets" className="btn btn-primary">
+                    Volver a Planets
                 </Link>
             </div>
         );
@@ -69,12 +66,12 @@ export const CharactersDetails = () => {
         );
     }
 
-    if (!personajeDetails) {
+    if (!planetDetails) {
         return (
             <div className="container mt-5 text-light">
                 <h2>No se pudieron cargar los detalles</h2>
-                <button className="btn btn-primary" onClick={() => navigate("/characters")}>
-                    Volver a Characters
+                <button className="btn btn-primary" onClick={() => navigate("/planets")}>
+                    Volver a Planets
                 </button>
             </div>
         );
@@ -83,13 +80,14 @@ export const CharactersDetails = () => {
     return (
         <div className="container mt-5 text-light">
             <div className="row g-4 align-items-start">
+                {/* Imagen grande */}
                 <div className="col-12 col-md-5">
                     <div className="card bg-dark border-secondary">
                         {imgUrl ? (
                             <img
                                 src={imgUrl}
                                 className="card-img-top"
-                                alt={personajeDetails.name}
+                                alt={planetDetails.name}
                                 style={{ objectFit: "cover" }}
                             />
                         ) : (
@@ -98,40 +96,40 @@ export const CharactersDetails = () => {
                     </div>
                 </div>
 
-
+                {/* Info */}
                 <div className="col-12 col-md-7">
-                    <h1 className="text-warning">{personajeDetails.name}</h1>
+                    <h1 className="text-warning">{planetDetails.name}</h1>
 
                     <div className="card bg-dark border-secondary mt-3">
                         <div className="card-body">
                             <ul className="list-group list-group-flush">
                                 <li className="list-group-item bg-dark text-light border-secondary">
-                                    <strong>Gender:</strong> {personajeDetails.gender}
+                                    <strong>Climate:</strong> {planetDetails.climate}
                                 </li>
                                 <li className="list-group-item bg-dark text-light border-secondary">
-                                    <strong>Birth year:</strong> {personajeDetails.birth_year}
+                                    <strong>Terrain:</strong> {planetDetails.terrain}
                                 </li>
                                 <li className="list-group-item bg-dark text-light border-secondary">
-                                    <strong>Height:</strong> {personajeDetails.height}
+                                    <strong>Population:</strong> {planetDetails.population}
                                 </li>
                                 <li className="list-group-item bg-dark text-light border-secondary">
-                                    <strong>Mass:</strong> {personajeDetails.mass}
+                                    <strong>Gravity:</strong> {planetDetails.gravity}
                                 </li>
                                 <li className="list-group-item bg-dark text-light border-secondary">
-                                    <strong>Hair color:</strong> {personajeDetails.hair_color}
+                                    <strong>Diameter:</strong> {planetDetails.diameter}
                                 </li>
                                 <li className="list-group-item bg-dark text-light border-secondary">
-                                    <strong>Skin color:</strong> {personajeDetails.skin_color}
+                                    <strong>Rotation period:</strong> {planetDetails.rotation_period}
                                 </li>
                                 <li className="list-group-item bg-dark text-light border-secondary">
-                                    <strong>Eye color:</strong> {personajeDetails.eye_color}
+                                    <strong>Orbital period:</strong> {planetDetails.orbital_period}
                                 </li>
                             </ul>
                         </div>
                     </div>
 
-                    <div className="mt-3 d-flex gap-2">
-                        <Link to="/characters" className="btn btn-primary">
+                    <div className="mt-3">
+                        <Link to="/planets" className="btn btn-primary">
                             Volver
                         </Link>
                     </div>

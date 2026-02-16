@@ -1,22 +1,26 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from sqlalchemy import Enum  # IMPORT NECESARIO
-from enum import Enum as PyEnum  # Para definir tu enum en Python
-
+from sqlalchemy import Enum  
+from enum import Enum as PyEnum  
+from sqlalchemy import UniqueConstraint
 
 db = SQLAlchemy()
 
-# Aqui modelo de datos de starwars en develop.
+
 
 class User(db.Model):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+
     is_active = db.Column(db.Boolean(), default=True)
+    is_admin = db.Column(db.Boolean(), default=False, nullable=False)  # ✅ FIX
+
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))
+
 
     def serialize(self):
         return {
@@ -24,78 +28,16 @@ class User(db.Model):
             "email": self.email,
             "is_active": self.is_active,
             "first_name": self.first_name,
-            "last_name": self.last_name
+            "last_name": self.last_name,
         }
 
 
-class Post(db.Model):
-    __tablename__ = 'posts'
-
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(150))
-    description = db.Column(db.String(500))
-    body = db.Column(db.Text)
-    date = db.Column(db.Date, default=datetime.utcnow)
-
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.relationship('User', backref=db.backref('posts', lazy=True))
-    
-    
-class Comment(db.Model):
-    __tablename__ = 'comments'
-
-    id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.String(500), nullable=False)
-
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-
-    user = db.relationship('User', backref=db.backref('comments', lazy=True))
-    post = db.relationship('Post', backref=db.backref('comments', lazy=True))
-
-
-class MediaType(PyEnum):
-    IMAGE = "image"
-    VIDEO = "video"
-
-
-class Media(db.Model):
-    __tablename__ = 'medias'
-
-    id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(Enum(MediaType), nullable=False)
-    url = db.Column(db.String(500), nullable=False)
-
-    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-    post = db.relationship('Post', backref=db.backref('medias', lazy=True))
-   
-   
-class Follower(db.Model):
-    __tablename__ = 'followers'
-
-    id = db.Column(db.Integer, primary_key=True)
-
-    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    following_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
-    follower = db.relationship(
-        'User',
-        foreign_keys=[follower_id],
-        backref=db.backref('following', lazy='dynamic')
-    )
-
-    following = db.relationship(
-        'User',
-        foreign_keys=[following_id],
-        backref=db.backref('followers', lazy='dynamic')
-    )
-
-
 class Character(db.Model):
-    __tablename__ = 'characters'
+    __tablename__ = "characters"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), nullable=False)
+
     height = db.Column(db.String(20))
     mass = db.Column(db.String(20))
     hair_color = db.Column(db.String(50))
@@ -104,12 +46,26 @@ class Character(db.Model):
     birth_year = db.Column(db.String(20))
     gender = db.Column(db.String(20))
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "height": self.height,
+            "mass": self.mass,
+            "hair_color": self.hair_color,
+            "skin_color": self.skin_color,
+            "eye_color": self.eye_color,
+            "birth_year": self.birth_year,
+            "gender": self.gender,
+        }
+
 
 class Planet(db.Model):
-    __tablename__ = 'planets'
+    __tablename__ = "planets"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), nullable=False)
+
     diameter = db.Column(db.String(50))
     rotation_period = db.Column(db.String(50))
     orbital_period = db.Column(db.String(50))
@@ -118,30 +74,109 @@ class Planet(db.Model):
     climate = db.Column(db.String(100))
     terrain = db.Column(db.String(100))
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "diameter": self.diameter,
+            "rotation_period": self.rotation_period,
+            "orbital_period": self.orbital_period,
+            "gravity": self.gravity,
+            "population": self.population,
+            "climate": self.climate,
+            "terrain": self.terrain,
+        }
+
+
+class Starship(db.Model):
+    __tablename__ = "starships"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+
+    model = db.Column(db.String(120))
+    manufacturer = db.Column(db.String(200))
+    cost_in_credits = db.Column(db.String(50))
+    length = db.Column(db.String(50))
+    crew = db.Column(db.String(50))
+    passengers = db.Column(db.String(50))
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "model": self.model,
+            "manufacturer": self.manufacturer,
+            "cost_in_credits": self.cost_in_credits,
+            "length": self.length,
+            "crew": self.crew,
+            "passengers": self.passengers,
+        }
 
 class CharacterFavorite(db.Model):
-    __tablename__ = 'character_favorites'
+    __tablename__ = "character_favorites"
+    __table_args__ = (
+        UniqueConstraint("user_id", "character_id", name="uq_user_character_fav"),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    character_id = db.Column(db.Integer, db.ForeignKey('characters.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    character_id = db.Column(db.Integer, db.ForeignKey("characters.id"), nullable=False)
 
-    user = db.relationship('User', backref=db.backref('favorite_characters', lazy=True))
-    character = db.relationship('Character', backref=db.backref('favorited_by', lazy=True))
+    user = db.relationship("User", backref=db.backref("favorite_characters", lazy=True))
+    character = db.relationship("Character", backref=db.backref("favorited_by", lazy=True))
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "character": self.character.serialize(),
+        }
 
 
 class PlanetFavorite(db.Model):
-    __tablename__ = 'planet_favorites'
+    __tablename__ = "planet_favorites"
+    __table_args__ = (
+        UniqueConstraint("user_id", "planet_id", name="uq_user_planet_fav"),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    planet_id = db.Column(db.Integer, db.ForeignKey('planets.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    planet_id = db.Column(db.Integer, db.ForeignKey("planets.id"), nullable=False)
 
-    user = db.relationship('User', backref=db.backref('favorite_planets', lazy=True))
-    planet = db.relationship('Planet', backref=db.backref('favorited_by', lazy=True))
+    user = db.relationship("User", backref=db.backref("favorite_planets", lazy=True))
+    planet = db.relationship("Planet", backref=db.backref("favorited_by", lazy=True))
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "planet": self.planet.serialize(),
+        }
+
+
+class StarshipFavorite(db.Model):
+    __tablename__ = "starship_favorites"
+    __table_args__ = (
+        UniqueConstraint("user_id", "starship_id", name="uq_user_starship_fav"),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    starship_id = db.Column(db.Integer, db.ForeignKey("starships.id"), nullable=False)
+
+    user = db.relationship("User", backref=db.backref("favorite_starships", lazy=True))
+    starship = db.relationship("Starship", backref=db.backref("favorited_by", lazy=True))
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "starship": self.starship.serialize(),
+        }
 
 # Aqui comentado el modelo de datos de Instagram...
 
